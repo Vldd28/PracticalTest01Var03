@@ -1,5 +1,6 @@
 package com.example.practicaltest01var03
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -20,7 +21,7 @@ class PracticalTest01Var03MainActivity : AppCompatActivity() {
 
     private var editableText1: EditText ?= null
     private var editableText2: EditText ?= null
-
+    private var navigationButton: Button ?= null
 
     private inner class minusButtonOnClickListener : View.OnClickListener {
         override fun onClick(view: View) {
@@ -50,10 +51,33 @@ class PracticalTest01Var03MainActivity : AppCompatActivity() {
             }
         }
     }
+    private inner class a : View.OnClickListener {
+        override fun onClick(view: View) {
+            Log.d("vlad","ai apasat")
+        }
+    }
+
+    private val navigationButtonOnClickListener = View.OnClickListener {
+        var finalText = ""
+
+        try {
+            var finalResult = editableText1?.text.toString().toInt() + editableText2?.text.toString().toInt()
+            finalText = finalText.plus(editableText1?.text.toString().plus(" + ").plus(editableText2?.text.toString()).plus(" = ").plus(finalResult.toString()))
+            Log.d("vlad",finalText)
+            startActivity(Intent(this, PracticalTest01Var03SecondaryActivity::class.java).putExtra("result",finalText.toString()))
+
+        }
+        catch (ex: Exception) {
+            Log.d("vlad","nu se poate")
+            Toast.makeText(applicationContext, getString(R.string.phone_error), Toast.LENGTH_LONG).show()
+
+        }
+
+    }
 
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+        override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_practical_test01_var03_main)
@@ -62,14 +86,18 @@ class PracticalTest01Var03MainActivity : AppCompatActivity() {
         resultText = findViewById(R.id.resultText)
         editableText1 = findViewById(R.id.editableText1)
         editableText2 = findViewById(R.id.editableText2)
+            navigationButton = findViewById(R.id.navigationButton)
         plusButton?.setOnClickListener(plusButtonOnClickListener())
         minusButton?.setOnClickListener(minusButtonOnClickListener())
+            navigationButton?.setOnClickListener(navigationButtonOnClickListener)
         if (savedInstanceState != null) {
             editableText1?.setText(savedInstanceState.getString("editText1"))
             editableText2?.setText(savedInstanceState.getString("editText2"))
         }
+            val receivedText = intent.getStringExtra("result").toString()
+            Toast.makeText(applicationContext, receivedText, Toast.LENGTH_LONG).show()
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.resultText)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
